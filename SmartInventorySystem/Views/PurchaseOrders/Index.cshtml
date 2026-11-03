@@ -1,0 +1,460 @@
+﻿
+@model IEnumerable<SmartInventorySystem.Model.PurchaseOrder>
+
+@{
+    ViewData["Title"] = "Purchase Orders";
+    var orders = Model.ToList();
+    var pendingCount = orders.Count(o => o.Status == "Pending");
+    var approvedCount = orders.Count(o => o.Status == "Approved");
+    var receivedCount = orders.Count(o => o.Status == "Received");
+    var totalAmount = orders.Sum(o => o.TotalAmount);
+}
+
+<style>
+    .orders-page {
+        color: #e5e7eb;
+    }
+
+    .page-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 28px;
+    }
+
+    .page-heading h2 {
+        font-weight: 750;
+        margin-bottom: 7px;
+    }
+
+    .page-heading p {
+        color: #9ca3af;
+        margin: 0;
+    }
+
+    .btn-add-order {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #7c3aed;
+        color: white;
+        text-decoration: none;
+        padding: 12px 18px;
+        border-radius: 10px;
+        font-weight: 600;
+    }
+
+    .btn-add-order:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .stat-card {
+        height: 100%;
+        background: #151b2d;
+        border: 1px solid #293249;
+        border-radius: 16px;
+        padding: 22px;
+    }
+
+    .stat-label {
+        color: #9ca3af;
+        font-size: 14px;
+        margin-bottom: 12px;
+    }
+
+    .stat-value {
+        font-size: 28px;
+        font-weight: 750;
+        color: #f9fafb;
+    }
+
+    .stat-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 20px;
+    }
+
+    .purple-icon {
+        background: rgba(139, 92, 246, .15);
+        color: #a78bfa;
+    }
+
+    .orange-icon {
+        background: rgba(245, 158, 11, .15);
+        color: #fbbf24;
+    }
+
+    .green-icon {
+        background: rgba(34, 197, 94, .15);
+        color: #4ade80;
+    }
+
+    .blue-icon {
+        background: rgba(59, 130, 246, .15);
+        color: #60a5fa;
+    }
+
+    .orders-panel {
+        margin-top: 25px;
+        background: #151b2d;
+        border: 1px solid #293249;
+        border-radius: 16px;
+        overflow: hidden;
+    }
+
+    .panel-heading {
+        padding: 22px;
+        border-bottom: 1px solid #293249;
+    }
+
+    .panel-heading h5 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .search-input {
+        background: #0f1525;
+        border: 1px solid #35405a;
+        color: #f3f4f6;
+        border-radius: 9px;
+        padding: 10px 13px;
+    }
+
+    .search-input:focus {
+        background: #0f1525;
+        color: white;
+        border-color: #8b5cf6;
+        box-shadow: none;
+    }
+
+    .search-input::placeholder {
+        color: #78839b;
+    }
+
+    .btn-search {
+        background: #293249;
+        color: #e5e7eb;
+        border: 0;
+        border-radius: 9px;
+        padding: 10px 15px;
+    }
+
+    .btn-search:hover {
+        background: #35405a;
+        color: white;
+    }
+
+    .orders-table {
+        width: 100%;
+        margin: 0;
+        color: #e5e7eb;
+        vertical-align: middle;
+    }
+
+    .orders-table thead th {
+        background: #111827;
+        color: #9ca3af;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 16px;
+        border-bottom: 1px solid #293249;
+        white-space: nowrap;
+    }
+
+    .orders-table tbody td {
+        background: #151b2d;
+        padding: 18px 16px;
+        border-bottom: 1px solid #252e43;
+    }
+
+    .orders-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .orders-table tbody tr:hover td {
+        background: #1b2338;
+    }
+
+    .order-number {
+        font-weight: 700;
+        color: #c4b5fd;
+    }
+
+    .supplier-name {
+        font-weight: 600;
+        color: #f3f4f6;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .status-pending {
+        color: #fbbf24;
+        background: rgba(245, 158, 11, .13);
+    }
+
+    .status-approved {
+        color: #60a5fa;
+        background: rgba(59, 130, 246, .13);
+    }
+
+    .status-received {
+        color: #4ade80;
+        background: rgba(34, 197, 94, .13);
+    }
+
+    .status-other {
+        color: #cbd5e1;
+        background: rgba(148, 163, 184, .13);
+    }
+
+    .empty-state {
+        padding: 55px 20px;
+        text-align: center;
+        color: #9ca3af;
+    }
+
+    .empty-state i {
+        display: block;
+        font-size: 42px;
+        color: #64748b;
+        margin-bottom: 14px;
+    }
+
+    .empty-state h5 {
+        color: #e5e7eb;
+        margin-bottom: 8px;
+    }
+
+    .success-message {
+        background: rgba(34, 197, 94, .12);
+        border: 1px solid rgba(34, 197, 94, .3);
+        color: #86efac;
+        padding: 13px 16px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+    }
+
+    @@media (max-width: 768px) {
+        .stat-value {
+            font-size: 24px;
+        }
+
+        .orders-table {
+            min-width: 760px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+<div class="orders-page">
+
+    <div class="page-heading">
+        <div>
+            <h2>Purchase Orders</h2>
+            <p>Manage supplier orders and track their status.</p>
+        </div>
+
+        <a asp-controller="PurchaseOrders"
+           asp-action="Create"
+           class="btn-add-order">
+            <i class="bi bi-plus-lg"></i>
+            New Purchase Order
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="success-message">
+            <i class="bi bi-check-circle me-2"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div class="row g-3">
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">@orders.Count</div>
+                    </div>
+                    <div class="stat-icon purple-icon">
+                        <i class="bi bi-receipt"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Pending</div>
+                        <div class="stat-value">@pendingCount</div>
+                    </div>
+                    <div class="stat-icon orange-icon">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Received</div>
+                        <div class="stat-value">@receivedCount</div>
+                    </div>
+                    <div class="stat-icon green-icon">
+                        <i class="bi bi-box-seam"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-xl-3">
+            <div class="stat-card">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="stat-label">Order Value</div>
+                        <div class="stat-value" style="font-size:23px">
+                            @totalAmount.ToString("N2")
+                        </div>
+                    </div>
+                    <div class="stat-icon blue-icon">
+                        <i class="bi bi-currency-dollar"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="orders-panel">
+        <div class="panel-heading">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                <div>
+                    <h5>All Purchase Orders</h5>
+                    <small style="color:#9ca3af">
+                        Review your purchase order records
+                    </small>
+                </div>
+
+                <form asp-controller="PurchaseOrders"
+                      asp-action="Index"
+                      method="get"
+                      class="d-flex gap-2 flex-wrap">
+
+                    <input type="text"
+                           name="searchString"
+                           value="@ViewBag.SearchString"
+                           class="form-control search-input"
+                           placeholder="Search supplier..."
+                           style="min-width:200px" />
+
+                    <button type="submit" class="btn-search">
+                        <i class="bi bi-search me-1"></i>
+                        Search
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        @if (!orders.Any())
+        {
+            <div class="empty-state">
+                <i class="bi bi-receipt-cutoff"></i>
+                <h5>No purchase orders yet</h5>
+                <p>Create your first purchase order to get started.</p>
+
+                <a asp-controller="PurchaseOrders"
+                   asp-action="Create"
+                   class="btn-add-order mt-2">
+                    <i class="bi bi-plus-lg"></i>
+                    Create Purchase Order
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order #</th>
+                            <th>Supplier</th>
+                            <th>Order Date</th>
+                            <th>Status</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var order in orders)
+                        {
+                            var statusClass = order.Status switch
+                            {
+                                "Pending" => "status-pending",
+                                "Approved" => "status-approved",
+                                "Received" => "status-received",
+                                _ => "status-other"
+                            };
+
+                            <tr>
+                                <td>
+                                    <span class="order-number">
+                                        PO-@order.Id.ToString("D4")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="supplier-name">
+                                        @(order.Supplier?.Name ?? "Unknown Supplier")
+                                    </span>
+                                </td>
+
+                                <td>@order.OrderDate.ToString("dd MMM yyyy")</td>
+
+                                <td>
+                                    <span class="status-badge @statusClass">
+                                        @order.Status
+                                    </span>
+                                </td>
+
+                                <td class="fw-semibold">
+                                    @order.TotalAmount.ToString("N2")
+                                </td>
+                                <td>
+    <a asp-controller="PurchaseOrders"
+       asp-action="Details"
+       asp-route-id="@order.Id"
+       class="btn btn-sm btn-outline-info">
+        <i class="bi bi-eye"></i> Details
+    </a>
+</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

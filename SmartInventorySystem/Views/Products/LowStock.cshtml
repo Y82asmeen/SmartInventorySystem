@@ -1,0 +1,570 @@
+﻿
+@model IEnumerable<SmartInventorySystem.Model.Product>
+
+@{
+    ViewData["Title"] = "Low Stock Alerts";
+
+    var products = Model.ToList();
+    var criticalProducts = products
+        .Where(p => p.Quantity == 0)
+        .ToList();
+
+    var totalShortage = products
+        .Sum(p => Math.Max(0, p.MinimumStock - p.Quantity));
+}
+
+<style>
+    .stock-page {
+        color: #f3f6ff;
+        padding: 12px 0 35px;
+    }
+
+    .stock-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .stock-header h2 {
+        color: #f3f6ff;
+        font-size: 28px;
+        font-weight: 750;
+        margin: 0 0 8px;
+    }
+
+    .stock-header p {
+        color: #9aadd0;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .stock-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #172747;
+        border: 1px solid #293d63;
+        color: #dce5fa;
+        padding: 11px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+    .stock-back:hover {
+        background: #24365a;
+        color: #fff;
+    }
+
+    .stock-stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 25px;
+    }
+
+    .stock-stat {
+        position: relative;
+        overflow: hidden;
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 16px;
+        padding: 23px;
+    }
+
+    .stock-stat-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 19px;
+    }
+
+    .stock-stat-label {
+        color: #9aadd0;
+        font-size: 13px;
+    }
+
+    .stock-stat-icon {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 20px;
+    }
+
+    .stock-stat-number {
+        font-size: 31px;
+        font-weight: 750;
+        color: #f3f6ff;
+        line-height: 1.2;
+    }
+
+    .stock-stat-note {
+        font-size: 12px;
+        color: #8195b9;
+        margin-top: 9px;
+    }
+
+    .stock-stat-red .stock-stat-icon {
+        background: rgba(255, 65, 108, .13);
+        color: #ff6688;
+    }
+
+    .stock-stat-orange .stock-stat-icon {
+        background: rgba(245, 158, 11, .13);
+        color: #fbbf24;
+    }
+
+    .stock-stat-blue .stock-stat-icon {
+        background: rgba(38, 136, 255, .13);
+        color: #63adff;
+    }
+
+    .stock-panel {
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 17px;
+        overflow: hidden;
+    }
+
+    .stock-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #203456;
+    }
+
+    .stock-panel-header h3 {
+        color: #f3f6ff;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    .stock-panel-header p {
+        color: #9aadd0;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .stock-count {
+        background: rgba(255, 65, 108, .12);
+        color: #ff7995;
+        border: 1px solid rgba(255, 65, 108, .25);
+        border-radius: 9px;
+        padding: 7px 11px;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+    .stock-table-wrap {
+        overflow-x: auto;
+    }
+
+    .stock-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 680px;
+        margin: 0;
+    }
+
+    .stock-table thead th {
+        background: #0b1429;
+        color: #91a5ca;
+        text-transform: uppercase;
+        font-size: 11px;
+        letter-spacing: .5px;
+        font-weight: 650;
+        padding: 16px 22px;
+        border-bottom: 1px solid #203456;
+        white-space: nowrap;
+    }
+
+    .stock-table tbody td {
+        color: #dce5fa;
+        padding: 18px 22px;
+        border-bottom: 1px solid #1b2b49;
+        vertical-align: middle;
+        font-size: 13px;
+    }
+
+    .stock-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .stock-table tbody tr:hover {
+        background: rgba(38, 136, 255, .035);
+    }
+
+    .stock-product {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 175px;
+    }
+
+    .stock-product-icon {
+        width: 39px;
+        height: 39px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        border-radius: 11px;
+        background: #19294a;
+        color: #9d8cff;
+        font-size: 18px;
+    }
+
+    .stock-product-name {
+        color: #f3f6ff;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+
+    .stock-product-id {
+        color: #8195b9;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .stock-quantity {
+        color: #ff6688;
+        font-weight: 750;
+        font-size: 16px;
+    }
+
+    .stock-minimum {
+        color: #c6d3eb;
+        font-weight: 600;
+    }
+
+    .stock-progress {
+        width: 100px;
+        height: 5px;
+        background: #243653;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+
+    .stock-progress-bar {
+        height: 100%;
+        border-radius: 10px;
+        background: #ff416c;
+    }
+
+    .stock-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 7px 10px;
+        font-size: 11px;
+        font-weight: 650;
+        white-space: nowrap;
+    }
+
+    .stock-status-critical {
+        color: #ff6b89;
+        background: rgba(255, 65, 108, .12);
+        border: 1px solid rgba(255, 65, 108, .22);
+    }
+
+    .stock-status-warning {
+        color: #fbbf24;
+        background: rgba(245, 158, 11, .12);
+        border: 1px solid rgba(245, 158, 11, .22);
+    }
+
+    .stock-edit {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        background: rgba(98, 71, 245, .14);
+        border: 1px solid rgba(98, 71, 245, .3);
+        color: #b6aaff;
+        padding: 8px 11px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: .2s;
+    }
+
+    .stock-edit:hover {
+        background: #6247f5;
+        color: #fff;
+    }
+
+    .stock-empty {
+        padding: 55px 20px;
+        text-align: center;
+    }
+
+    .stock-empty-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 18px;
+        border-radius: 22px;
+        background: rgba(0, 201, 154, .12);
+        color: #00c99a;
+        font-size: 31px;
+    }
+
+    .stock-empty h3 {
+        color: #f3f6ff;
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 9px;
+    }
+
+    .stock-empty p {
+        color: #9aadd0;
+        font-size: 13px;
+        margin-bottom: 22px;
+    }
+
+    .stock-footer {
+        padding: 15px 24px;
+        background: #0b1429;
+        border-top: 1px solid #203456;
+        color: #8195b9;
+        font-size: 12px;
+    }
+
+    @@media (max-width: 850px) {
+        .stock-stats {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .stock-stat {
+            padding: 19px;
+        }
+
+        .stock-stat-top {
+            margin-bottom: 12px;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .stock-header h2 {
+            font-size: 23px;
+        }
+
+        .stock-panel-header {
+            padding: 18px;
+        }
+    }
+</style>
+
+<div class="stock-page">
+
+    <div class="stock-header">
+        <div>
+            <h2>
+                <i class="bi bi-exclamation-triangle"
+                   style="color:#ff6688;"></i>
+                Low Stock Alerts
+            </h2>
+
+            <p>Monitor inventory levels and identify products that need replenishment.</p>
+        </div>
+
+        <a asp-controller="Products"
+           asp-action="Index"
+           class="stock-back">
+            <i class="bi bi-arrow-left"></i>
+            Back to Products
+        </a>
+    </div>
+
+    <div class="stock-stats">
+
+        <div class="stock-stat stock-stat-red">
+            <div class="stock-stat-top">
+                <span class="stock-stat-label">Products Needing Attention</span>
+                <div class="stock-stat-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+            </div>
+
+            <div class="stock-stat-number">@products.Count</div>
+            <div class="stock-stat-note">Products at or below minimum stock</div>
+        </div>
+
+        <div class="stock-stat stock-stat-orange">
+            <div class="stock-stat-top">
+                <span class="stock-stat-label">Out of Stock</span>
+                <div class="stock-stat-icon">
+                    <i class="bi bi-box2"></i>
+                </div>
+            </div>
+
+            <div class="stock-stat-number">@criticalProducts.Count</div>
+            <div class="stock-stat-note">Products with zero available units</div>
+        </div>
+
+        <div class="stock-stat stock-stat-blue">
+            <div class="stock-stat-top">
+                <span class="stock-stat-label">Units Below Minimum</span>
+                <div class="stock-stat-icon">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+            </div>
+
+            <div class="stock-stat-number">@totalShortage</div>
+            <div class="stock-stat-note">Units needed to reach minimum levels</div>
+        </div>
+
+    </div>
+
+    <div class="stock-panel">
+
+        <div class="stock-panel-header">
+            <div>
+                <h3>Inventory Alerts</h3>
+                <p>Review stock levels and update product quantities.</p>
+            </div>
+
+            <span class="stock-count">
+                @products.Count Alerts
+            </span>
+        </div>
+
+        @if (!products.Any())
+        {
+            <div class="stock-empty">
+                <div class="stock-empty-icon">
+                    <i class="bi bi-check2-circle"></i>
+                </div>
+
+                <h3>All Stock Levels Look Good!</h3>
+
+                <p>
+                    No products currently require replenishment.
+                    Your inventory is in good shape.
+                </p>
+
+                <a asp-controller="Products"
+                   asp-action="Index"
+                   class="stock-edit">
+                    <i class="bi bi-box-seam"></i>
+                    View All Products
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="stock-table-wrap">
+                <table class="stock-table">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Available</th>
+                            <th>Minimum Level</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var product in products.OrderBy(p => p.Quantity))
+                        {
+                            var percentage = product.MinimumStock > 0
+                                ? Math.Min(100, (int)((double)product.Quantity / product.MinimumStock * 100))
+                                : 100;
+
+                            <tr>
+                                <td>
+                                    <div class="stock-product">
+                                        <div class="stock-product-icon">
+                                            <i class="bi bi-box-seam"></i>
+                                        </div>
+
+                                        <div>
+                                            <div class="stock-product-name">
+                                                @product.Name
+                                            </div>
+
+                                            <div class="stock-product-id">
+                                                ID: @product.Id
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <div class="stock-quantity">
+                                        @product.Quantity
+                                    </div>
+
+                                    <div class="stock-progress">
+                                        <div class="stock-progress-bar"
+                                             style="width:@(percentage)%;">
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="stock-minimum">
+                                        @product.MinimumStock units
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (product.Quantity == 0)
+                                    {
+                                        <span class="stock-status stock-status-critical">
+                                            <i class="bi bi-x-circle-fill"></i>
+                                            Out of Stock
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="stock-status stock-status-warning">
+                                            <i class="bi bi-exclamation-circle-fill"></i>
+                                            Reorder Required
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <a asp-controller="Products"
+                                       asp-action="Edit"
+                                       asp-route-id="@product.Id"
+                                       class="stock-edit">
+                                        <i class="bi bi-pencil-square"></i>
+                                        Update
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="stock-footer">
+                <i class="bi bi-info-circle"></i>
+                Alerts are based on each product's current quantity and minimum stock level.
+            </div>
+        }
+
+    </div>
+
+</div>

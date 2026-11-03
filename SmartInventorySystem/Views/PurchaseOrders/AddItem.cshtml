@@ -1,0 +1,208 @@
+﻿
+@model SmartInventorySystem.Model.PurchaseOrderItem
+
+@{
+    ViewData["Title"] = "Add Product to Order";
+}
+
+<style>
+    .add-item-page {
+        max-width: 850px;
+        margin: 0 auto;
+        color: #e5e7eb;
+    }
+
+    .page-heading {
+        margin-bottom: 25px;
+    }
+
+    .page-heading h2 {
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .page-heading p {
+        color: #9ca3af;
+    }
+
+    .form-card {
+        background: #151b2d;
+        border: 1px solid #293249;
+        border-radius: 18px;
+        padding: 30px;
+    }
+
+    .section-title {
+        font-size: 16px;
+        font-weight: 700;
+        border-bottom: 1px solid #293249;
+        padding-bottom: 15px;
+        margin-bottom: 24px;
+    }
+
+    .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-control,
+    .form-select {
+        background: #0f1525;
+        border: 1px solid #35405a;
+        color: #f3f4f6;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+
+    .form-control:focus,
+    .form-select:focus {
+        background: #0f1525;
+        color: white;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, .15);
+    }
+
+    .form-select option {
+        background: #151b2d;
+        color: white;
+    }
+
+    .form-control::placeholder {
+        color: #78839b;
+    }
+
+    .field-group {
+        margin-bottom: 23px;
+    }
+
+    .info-note {
+        background: rgba(59, 130, 246, .1);
+        border: 1px solid rgba(59, 130, 246, .25);
+        color: #93c5fd;
+        padding: 15px;
+        border-radius: 10px;
+        line-height: 1.7;
+        font-size: 13px;
+        margin: 20px 0 25px;
+    }
+
+    .btn-save {
+        background: #7c3aed;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 22px;
+        font-weight: 600;
+    }
+
+    .btn-save:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #293249;
+        color: #e5e7eb;
+        border-radius: 10px;
+        padding: 12px 22px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        background: #35405a;
+        color: white;
+    }
+
+    .text-danger {
+        font-size: 13px;
+    }
+
+    @@media (max-width: 576px) {
+        .form-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="add-item-page">
+    <div class="page-heading">
+        <h2>Add Product to Order</h2>
+        <p>Select a product and enter the quantity required.</p>
+    </div>
+
+    <div class="form-card">
+        <h5 class="section-title">
+            <i class="bi bi-box-seam me-2" style="color:#a78bfa"></i>
+            Purchase Order Item
+        </h5>
+
+        <form asp-controller="PurchaseOrders"
+              asp-action="AddItem"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" asp-for="PurchaseOrderId" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="field-group">
+                <label asp-for="ProductId" class="form-label">
+                    Product <span class="text-danger">*</span>
+                </label>
+
+                <select asp-for="ProductId"
+                        asp-items="ViewBag.ProductId"
+                        class="form-select">
+                    <option value="">-- Select Product --</option>
+                </select>
+
+                <span asp-validation-for="ProductId"
+                      class="text-danger"></span>
+
+                <small style="color:#9ca3af">
+                    Only products with available stock and a positive price are listed.
+                </small>
+            </div>
+
+            <div class="field-group">
+                <label asp-for="Quantity" class="form-label">
+                    Quantity <span class="text-danger">*</span>
+                </label>
+
+                <input asp-for="Quantity"
+                       type="number"
+                       min="1"
+                       max="100000"
+                       class="form-control" />
+
+                <span asp-validation-for="Quantity"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="info-note">
+                <i class="bi bi-info-circle me-2"></i>
+                The unit price will be taken from the selected product's
+                saved price. The order total will be recalculated after
+                the item is added.
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-plus-circle me-1"></i>
+                    Add Product
+                </button>
+
+                <a asp-controller="PurchaseOrders"
+                   asp-action="Details"
+                   asp-route-id="@Model.PurchaseOrderId"
+                   class="btn-cancel">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,590 @@
+﻿
+@model IEnumerable<SmartInventorySystem.Model.Supplier>
+
+@{
+    ViewData["Title"] = "Suppliers";
+    var suppliers = Model.ToList();
+}
+
+<style>
+    .suppliers-page {
+        color: #f3f6ff;
+        padding: 12px 0 35px;
+    }
+
+    .suppliers-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .suppliers-header h2 {
+        color: #f3f6ff;
+        font-size: 28px;
+        font-weight: 750;
+        margin: 0 0 8px;
+    }
+
+    .suppliers-header p {
+        color: #9aadd0;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .supplier-btn-primary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #6247f5, #805bff);
+        border: 0;
+        color: white;
+        border-radius: 10px;
+        padding: 12px 17px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+        transition: .2s;
+    }
+
+    .supplier-btn-primary:hover {
+        color: white;
+        transform: translateY(-1px);
+        filter: brightness(1.1);
+    }
+
+    .supplier-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin-bottom: 24px;
+    }
+
+    .supplier-stat {
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 16px;
+        padding: 22px;
+    }
+
+    .supplier-stat-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+    .supplier-stat-label {
+        color: #9aadd0;
+        font-size: 13px;
+    }
+
+    .supplier-stat-icon {
+        width: 43px;
+        height: 43px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 20px;
+        background: rgba(98, 71, 245, .15);
+        color: #a99bff;
+    }
+
+    .supplier-stat-number {
+        color: #f3f6ff;
+        font-size: 30px;
+        font-weight: 750;
+    }
+
+    .supplier-stat-note {
+        color: #8195b9;
+        font-size: 12px;
+        margin-top: 5px;
+    }
+
+    .supplier-panel {
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 17px;
+        overflow: hidden;
+    }
+
+    .supplier-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 22px 24px;
+        border-bottom: 1px solid #203456;
+    }
+
+    .supplier-panel-header h3 {
+        color: #f3f6ff;
+        font-size: 17px;
+        font-weight: 700;
+        margin: 0 0 6px;
+    }
+
+    .supplier-panel-header p {
+        color: #9aadd0;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .supplier-search {
+        display: flex;
+        gap: 8px;
+        width: min(100%, 370px);
+    }
+
+    .supplier-search input {
+        min-width: 0;
+        flex: 1;
+        background: #0b1429;
+        color: #f3f6ff;
+        border: 1px solid #293d63;
+        border-radius: 9px;
+        padding: 10px 12px;
+        outline: none;
+    }
+
+    .supplier-search input:focus {
+        border-color: #795fff;
+        box-shadow: 0 0 0 3px rgba(98, 71, 245, .15);
+    }
+
+    .supplier-search input::placeholder {
+        color: #8195b9;
+    }
+
+    .supplier-search button {
+        background: #24365a;
+        color: #f3f6ff;
+        border: 1px solid #344a70;
+        border-radius: 9px;
+        padding: 9px 13px;
+    }
+
+    .supplier-search button:hover {
+        background: #304773;
+    }
+
+    .supplier-table-wrap {
+        overflow-x: auto;
+    }
+
+    .supplier-table {
+        width: 100%;
+        min-width: 760px;
+        border-collapse: collapse;
+        margin: 0;
+    }
+
+    .supplier-table thead th {
+        background: #0b1429;
+        color: #91a5ca;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+        padding: 16px 20px;
+        border-bottom: 1px solid #203456;
+        white-space: nowrap;
+    }
+
+    .supplier-table tbody td {
+        color: #dce5fa;
+        font-size: 13px;
+        padding: 17px 20px;
+        border-bottom: 1px solid #1b2b49;
+        vertical-align: middle;
+    }
+
+    .supplier-table tbody tr:last-child td {
+        border-bottom: 0;
+    }
+
+    .supplier-table tbody tr:hover {
+        background: rgba(38, 136, 255, .035);
+    }
+
+    .supplier-name-cell {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        min-width: 180px;
+    }
+
+    .supplier-avatar {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background: rgba(98, 71, 245, .16);
+        color: #b6aaff;
+        font-size: 18px;
+    }
+
+    .supplier-name {
+        color: #f3f6ff;
+        font-weight: 650;
+        overflow-wrap: anywhere;
+    }
+
+    .supplier-id {
+        color: #8195b9;
+        font-size: 11px;
+        margin-top: 4px;
+    }
+
+    .supplier-contact {
+        color: #c5d2ec;
+        overflow-wrap: anywhere;
+    }
+
+    .supplier-muted {
+        color: #7185a8;
+        font-size: 12px;
+    }
+
+    .supplier-actions {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .supplier-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        border-radius: 8px;
+        padding: 8px 10px;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+        transition: .2s;
+    }
+
+    .supplier-edit {
+        color: #b6aaff;
+        background: rgba(98, 71, 245, .13);
+        border: 1px solid rgba(98, 71, 245, .3);
+    }
+
+    .supplier-edit:hover {
+        background: #6247f5;
+        color: #fff;
+    }
+
+    .supplier-delete {
+        color: #ff7995;
+        background: rgba(255, 65, 108, .09);
+        border: 1px solid rgba(255, 65, 108, .2);
+    }
+
+    .supplier-delete:hover {
+        background: #d9365e;
+        color: #fff;
+    }
+
+    .supplier-alert {
+        margin: 18px 24px 0;
+        padding: 12px 15px;
+        border-radius: 10px;
+        font-size: 13px;
+    }
+
+    .supplier-alert-success {
+        color: #70e7c5;
+        background: rgba(0, 201, 154, .09);
+        border: 1px solid rgba(0, 201, 154, .25);
+    }
+
+    .supplier-empty {
+        padding: 50px 20px;
+        text-align: center;
+    }
+
+    .supplier-empty-icon {
+        width: 68px;
+        height: 68px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 18px;
+        border-radius: 20px;
+        background: rgba(98, 71, 245, .13);
+        color: #a99bff;
+        font-size: 30px;
+    }
+
+    .supplier-empty h3 {
+        color: #f3f6ff;
+        font-size: 19px;
+        font-weight: 700;
+        margin-bottom: 9px;
+    }
+
+    .supplier-empty p {
+        color: #9aadd0;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .supplier-footer {
+        color: #8195b9;
+        background: #0b1429;
+        border-top: 1px solid #203456;
+        padding: 14px 24px;
+        font-size: 12px;
+    }
+
+    @@media (max-width: 700px) {
+        .supplier-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .supplier-panel-header {
+            align-items: stretch;
+            padding: 18px;
+        }
+
+        .supplier-search {
+            width: 100%;
+        }
+
+        .suppliers-header h2 {
+            font-size: 23px;
+        }
+    }
+</style>
+
+<div class="suppliers-page">
+
+    <div class="suppliers-header">
+        <div>
+            <h2>
+                <i class="bi bi-buildings" style="color:#a99bff;"></i>
+                Suppliers
+            </h2>
+            <p>Manage supplier contacts and maintain your purchasing network.</p>
+        </div>
+
+        <a asp-controller="Suppliers"
+           asp-action="Create"
+           class="supplier-btn-primary">
+            <i class="bi bi-plus-lg"></i>
+            Add New Supplier
+        </a>
+    </div>
+
+    <div class="supplier-stats">
+
+        <div class="supplier-stat">
+            <div class="supplier-stat-top">
+                <span class="supplier-stat-label">Total Suppliers</span>
+                <div class="supplier-stat-icon">
+                    <i class="bi bi-people"></i>
+                </div>
+            </div>
+
+            <div class="supplier-stat-number">@suppliers.Count</div>
+            <div class="supplier-stat-note">Suppliers registered in the system</div>
+        </div>
+
+        <div class="supplier-stat">
+            <div class="supplier-stat-top">
+                <span class="supplier-stat-label">Contact Information</span>
+                <div class="supplier-stat-icon">
+                    <i class="bi bi-person-lines-fill"></i>
+                </div>
+            </div>
+
+            <div class="supplier-stat-number">
+                @suppliers.Count(s => !string.IsNullOrWhiteSpace(s.Phone)
+                    || !string.IsNullOrWhiteSpace(s.Email))
+            </div>
+            <div class="supplier-stat-note">Suppliers with a phone number or email</div>
+        </div>
+
+    </div>
+
+    <div class="supplier-panel">
+
+        <div class="supplier-panel-header">
+            <div>
+                <h3>All Suppliers</h3>
+                <p>View, search, and manage registered suppliers.</p>
+            </div>
+
+            <form asp-controller="Suppliers"
+                  asp-action="Index"
+                  method="get"
+                  class="supplier-search">
+
+                <input type="text"
+                       name="searchString"
+                       value="@ViewBag.SearchString"
+                       placeholder="Search suppliers by name..."
+                       aria-label="Search suppliers" />
+
+                <button type="submit" aria-label="Search">
+                    <i class="bi bi-search"></i>
+                </button>
+            </form>
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="supplier-alert supplier-alert-success">
+                <i class="bi bi-check-circle-fill"></i>
+                @TempData["SuccessMessage"]
+            </div>
+        }
+
+        @if (!suppliers.Any())
+        {
+            <div class="supplier-empty">
+                <div class="supplier-empty-icon">
+                    <i class="bi bi-buildings"></i>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(ViewBag.SearchString as string))
+                {
+                    <h3>No Matching Suppliers</h3>
+                    <p>Try another search term or clear the search.</p>
+
+                    <a asp-action="Index" class="supplier-btn-primary">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Clear Search
+                    </a>
+                }
+                else
+                {
+                    <h3>No Suppliers Yet</h3>
+                    <p>Add your first supplier to start building your purchasing network.</p>
+
+                    <a asp-action="Create" class="supplier-btn-primary">
+                        <i class="bi bi-plus-lg"></i>
+                        Add First Supplier
+                    </a>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="supplier-table-wrap">
+                <table class="supplier-table">
+                    <thead>
+                        <tr>
+                            <th>Supplier</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Address</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var supplier in suppliers)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="supplier-name-cell">
+                                        <div class="supplier-avatar">
+                                            <i class="bi bi-building"></i>
+                                        </div>
+
+                                        <div>
+                                            <div class="supplier-name">
+                                                @supplier.Name
+                                            </div>
+                                            <div class="supplier-id">
+                                                ID: @supplier.Id
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(supplier.Phone))
+                                    {
+                                        <span class="supplier-contact">
+                                            <i class="bi bi-telephone"></i>
+                                            @supplier.Phone
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="supplier-muted">Not provided</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(supplier.Email))
+                                    {
+                                        <span class="supplier-contact">
+                                            <i class="bi bi-envelope"></i>
+                                            @supplier.Email
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="supplier-muted">Not provided</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (!string.IsNullOrWhiteSpace(supplier.Address))
+                                    {
+                                        <span class="supplier-contact">
+                                            @supplier.Address
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="supplier-muted">Not provided</span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="supplier-actions">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@supplier.Id"
+                                           class="supplier-action supplier-edit">
+                                            <i class="bi bi-pencil-square"></i>
+                                            Edit
+                                        </a>
+
+                                        <a asp-action="Delete"
+                                           asp-route-id="@supplier.Id"
+                                           class="supplier-action supplier-delete">
+                                            <i class="bi bi-trash3"></i>
+                                            Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="supplier-footer">
+                <i class="bi bi-info-circle"></i>
+                Showing @suppliers.Count supplier(s).
+            </div>
+        }
+
+    </div>
+</div>

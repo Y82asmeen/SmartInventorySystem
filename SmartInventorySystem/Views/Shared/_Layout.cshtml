@@ -1,0 +1,417 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Smart Inventory</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+    <style>
+        :root {
+            --bg: #080f20;
+            --sidebar: #0b1429;
+            --surface: #101d38;
+            --surface-hover: #172747;
+            --border: #203456;
+            --text: #f3f6ff;
+            --muted: #9aadd0;
+            --purple: #6247f5;
+            --blue: #2688ff;
+            --green: #00c99a;
+            --red: #ff416c;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        a { text-decoration: none; }
+
+        .app-sidebar {
+            position: fixed;
+            inset: 0 auto 0 0;
+            width: 250px;
+            padding: 24px 15px;
+            background: linear-gradient(180deg, #0b1429, #0a1224);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 8px;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .brand-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 13px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, #438bff, #6547f5);
+            font-size: 24px;
+        }
+
+        .brand-name { font-size: 19px; font-weight: 750; }
+        .brand-subtitle { font-size: 11px; color: var(--muted); }
+
+        .nav-label {
+            color: #7186ad;
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            padding: 0 13px;
+            margin: 8px 0 12px;
+        }
+
+        .side-link {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            padding: 13px 14px;
+            margin-bottom: 7px;
+            border-radius: 10px;
+            color: #b9c8e7;
+            transition: .2s;
+        }
+
+        .side-link i { font-size: 18px; width: 22px; }
+        .side-link:hover {
+            background: var(--surface-hover);
+            color: white;
+        }
+
+        .side-link.active {
+            background: linear-gradient(100deg, #4248ee, #6236e9);
+            color: white;
+            box-shadow: 0 6px 20px #4338ca33;
+        }
+
+        .side-badge {
+            margin-left: auto;
+            background: var(--red);
+            color: white;
+            border-radius: 20px;
+            padding: 2px 8px;
+            font-size: 11px;
+        }
+
+        .sidebar-bottom {
+            margin-top: auto;
+            padding: 17px;
+            border-radius: 14px;
+            border: 1px solid #293b70;
+            background: linear-gradient(140deg, #152a59, #191448);
+        }
+
+        .sidebar-bottom i { color: #a99aff; font-size: 23px; }
+        .sidebar-bottom p { color: #aebde0; font-size: 12px; margin: 8px 0 0; }
+
+        .app-main { margin-left: 250px; min-height: 100vh; }
+
+        .topbar {
+            height: 76px;
+            padding: 0 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #0d1830;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 620px;
+            width: 100%;
+            padding: 11px 15px;
+            background: #172544;
+            border: 1px solid #283d65;
+            border-radius: 10px;
+            color: #a7b9df;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: transparent;
+            border: 0;
+            outline: none;
+            color: white;
+        }
+
+        .top-user { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+        .avatar {
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-weight: 700;
+            background: linear-gradient(135deg, #438bff, #7045f5);
+        }
+
+        .user-role { color: var(--muted); font-size: 12px; }
+
+        .page-content { padding: 28px; max-width: 1800px; margin: auto; }
+
+        h1, h2, h3, h4, h5, h6 { color: var(--text); }
+        p, .text-muted { color: var(--muted) !important; }
+
+        .card, .dashboard-card, .panel {
+            background: linear-gradient(145deg, #101e39, #0e1930);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text);
+            box-shadow: 0 8px 25px #00000012;
+        }
+
+        .card-header {
+            background: transparent;
+            color: var(--text);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: #e3eaff;
+            --bs-table-border-color: #203252;
+            --bs-table-hover-bg: #19294a;
+            --bs-table-hover-color: white;
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            background: #142340;
+            color: #aebfe2;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .table td { padding: 13px; vertical-align: middle; }
+        .form-control, .form-select {
+            background-color: #101e39;
+            color: white;
+            border-color: #304366;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #142340;
+            color: white;
+            border-color: #7057ff;
+            box-shadow: 0 0 0 .2rem #7057ff25;
+        }
+
+        .form-control::placeholder { color: #8295b8; }
+
+        .btn-primary {
+            background: linear-gradient(100deg, #4658f5, #7445ed);
+            border: 0;
+        }
+
+        .btn-primary:hover { filter: brightness(1.13); }
+        .btn-outline-secondary { color: #c2cfea; border-color: #405477; }
+        .btn-outline-secondary:hover { background: #243657; color: white; }
+
+        .alert { border-radius: 10px; }
+        footer {
+            text-align: center;
+            color: #6f84aa;
+            font-size: 12px;
+            padding: 18px;
+            border-top: 1px solid var(--border);
+        }
+
+        @@media (max-width: 900px) {
+            .app-sidebar { width: 76px; padding: 20px 10px; }
+            .brand { justify-content: center; padding: 0; }
+            .brand-text, .nav-label, .side-link span,
+            .side-badge, .sidebar-bottom { display: none; }
+            .side-link { justify-content: center; padding: 14px 8px; }
+            .side-link i { width: auto; }
+            .app-main { margin-left: 76px; }
+            .topbar { padding: 0 15px; }
+            .page-content { padding: 18px 14px; }
+        }
+
+        @@media (max-width: 520px) {
+            .topbar { height: 65px; }
+            .top-user .user-details { display: none; }
+            .page-content { padding: 14px 10px; }
+        }
+        
+/* Smooth transitions */
+.dashboard-card,
+.panel,
+.card {
+    transition: transform 0.22s ease, border-color 0.22s ease,
+                box-shadow 0.22s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-4px);
+    border-color: #5368a0;
+    box-shadow: 0 12px 30px #00000030;
+}
+
+.panel:hover {
+    border-color: #304875;
+}
+
+/* Buttons */
+.btn {
+    transition: transform 0.18s ease, filter 0.18s ease;
+    font-weight: 500;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+}
+
+.btn:focus-visible,
+a:focus-visible {
+    outline: 2px solid #a783ff;
+    outline-offset: 3px;
+}
+
+/* Product tables */
+.table tbody tr {
+    transition: background-color 0.18s ease;
+}
+
+.table tbody tr:hover {
+    background-color: #172747;
+}
+
+.table td {
+    border-color: #203252;
+}
+
+/* Better badges */
+.badge {
+    font-weight: 600;
+    letter-spacing: 0.2px;
+    padding: 6px 10px;
+}
+
+/* Page headings */
+.page-content h2 {
+    letter-spacing: -0.5px;
+}
+
+/* Custom scrollbar */
+.app-sidebar::-webkit-scrollbar {
+    width: 5px;
+}
+
+.app-sidebar::-webkit-scrollbar-thumb {
+    background: #304366;
+    border-radius: 10px;
+}
+
+/* Responsive tables and layout */
+@@media (max-width: 600px) {
+    .dashboard-card {
+        padding: 18px !important;
+    }
+
+    .table {
+        font-size: 13px;
+    }
+
+    .topbar .search-box {
+        padding: 9px 10px;
+    }
+}
+    </style>
+</head>
+<body>
+
+    <aside class="app-sidebar">
+        <a href="/Home" class="brand">
+            <span class="brand-icon"><i class="bi bi-boxes"></i></span>
+            <span class="brand-text">
+                <span class="brand-name">Smart Inventory</span><br />
+                <span class="brand-subtitle">Management System</span>
+            </span>
+        </a>
+
+        <div class="nav-label">WORKSPACE</div>
+
+        <a href="/Home" class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+            <i class="bi bi-grid-1x2-fill"></i><span>Dashboard</span>
+        </a>
+        <a href="/Products" class="side-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+            <i class="bi bi-box-seam"></i><span>Products</span>
+        </a>
+        <a href="/Products/LowStock" class="side-link">
+            <i class="bi bi-bell"></i><span>Low Stock Alerts</span>
+        </a>
+
+        <div class="nav-label mt-4">MANAGEMENT</div>
+        <a  asp-controller="Suppliers" asp-action="Index" class="side-link" title="Suppliers module coming soon">
+            <i class="bi bi-people"></i><span>Suppliers</span>
+        </a>
+        <a asp-controller="PurchaseOrders"asp-action="Index" class="side-link" title="Purchase Orders module coming soon">
+            <i class="bi bi-clipboard-check"></i><span>Purchase Orders</span>
+        </a>
+        <a href="#" class="side-link" title="Reports module coming soon">
+            <i class="bi bi-bar-chart-line"></i><span>Reports</span>
+        </a>
+        <a href="#" class="side-link" title="Settings module coming soon">
+            <i class="bi bi-gear"></i><span>Settings</span>
+        </a>
+
+        <div class="sidebar-bottom">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <div class="fw-bold mt-2">Smart Decisions</div>
+            <div class="fw-bold">Better Inventory</div>
+            <p>Track. Manage. Grow.</p>
+        </div>
+    </aside>
+
+    <div class="app-main">
+        <header class="topbar">
+            <label class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="search" placeholder="Search products, suppliers..." />
+            </label>
+
+            <div class="top-user">
+                <div class="avatar">A</div>
+                <div class="user-details">
+                    <div class="fw-semibold">Administrator</div>
+                    <div class="user-role">Inventory Manager</div>
+                </div>
+            </div>
+        </header>
+
+        <main class="page-content">
+            @RenderBody()
+        </main>
+
+        <footer>
+            Smart Inventory Management System &copy; @DateTime.Now.Year
+        </footer>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

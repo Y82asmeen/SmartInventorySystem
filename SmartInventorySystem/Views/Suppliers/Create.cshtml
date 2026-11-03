@@ -1,0 +1,448 @@
+﻿
+@model SmartInventorySystem.Model.Supplier
+
+@{
+    ViewData["Title"] = "Add New Supplier";
+}
+
+<style>
+    .supplier-create {
+        color: #f3f6ff;
+        padding: 12px 0 35px;
+    }
+
+    .supplier-create-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 26px;
+    }
+
+    .supplier-create-header h2 {
+        font-size: 27px;
+        font-weight: 750;
+        margin: 0 0 8px;
+        color: #f3f6ff;
+    }
+
+    .supplier-create-header p {
+        color: #9aadd0;
+        font-size: 14px;
+        margin: 0;
+    }
+
+    .supplier-create-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #172747;
+        border: 1px solid #293d63;
+        color: #dce5fa;
+        padding: 10px 15px;
+        border-radius: 10px;
+        text-decoration: none;
+    }
+
+    .supplier-create-back:hover {
+        background: #24365a;
+        color: #fff;
+    }
+
+    .supplier-create-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(230px, .8fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .supplier-create-card {
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 18px;
+        padding: 27px;
+    }
+
+    .supplier-create-card-heading {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding-bottom: 21px;
+        margin-bottom: 23px;
+        border-bottom: 1px solid #203456;
+    }
+
+    .supplier-create-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: rgba(98, 71, 245, .17);
+        color: #a99bff;
+        font-size: 21px;
+    }
+
+    .supplier-create-card-heading h3 {
+        color: #f3f6ff;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 5px;
+    }
+
+    .supplier-create-card-heading p {
+        color: #9aadd0;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .supplier-create .form-label {
+        color: #dce5fa;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .supplier-create .form-control {
+        background: #0b1429;
+        color: #f3f6ff;
+        border: 1px solid #293d63;
+        border-radius: 10px;
+        min-height: 46px;
+        padding: 11px 13px;
+        box-shadow: none;
+    }
+
+    .supplier-create textarea.form-control {
+        min-height: 110px;
+        resize: vertical;
+    }
+
+    .supplier-create .form-control:focus {
+        background: #0b1429;
+        color: #fff;
+        border-color: #795fff;
+        box-shadow: 0 0 0 3px rgba(98, 71, 245, .16);
+    }
+
+    .supplier-create .form-control::placeholder {
+        color: #7285a8;
+    }
+
+    .supplier-create-field {
+        margin-bottom: 21px;
+    }
+
+    .supplier-create .text-danger {
+        display: block;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .supplier-create .validation-summary-errors {
+        color: #ff7995;
+        background: rgba(255, 65, 108, .08);
+        border: 1px solid rgba(255, 65, 108, .25);
+        border-radius: 10px;
+        padding: 12px 15px;
+        margin-bottom: 20px;
+    }
+
+    .supplier-create .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .supplier-create-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 11px;
+        border-top: 1px solid #203456;
+        padding-top: 22px;
+        margin-top: 6px;
+    }
+
+    .supplier-create-save {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #6247f5, #805bff);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 21px;
+        font-weight: 650;
+        transition: .2s;
+    }
+
+    .supplier-create-save:hover {
+        color: #fff;
+        filter: brightness(1.1);
+        transform: translateY(-1px);
+    }
+
+    .supplier-create-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #172747;
+        border: 1px solid #293d63;
+        color: #dce5fa;
+        border-radius: 10px;
+        padding: 12px 18px;
+        text-decoration: none;
+    }
+
+    .supplier-create-cancel:hover {
+        background: #24365a;
+        color: #fff;
+    }
+
+    .supplier-create-info {
+        background: linear-gradient(155deg, #151e43, #101d38 75%);
+        border: 1px solid #29365f;
+        border-radius: 18px;
+        padding: 24px;
+    }
+
+    .supplier-create-info-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(38, 136, 255, .14);
+        color: #63adff;
+        border-radius: 16px;
+        font-size: 25px;
+        margin-bottom: 19px;
+    }
+
+    .supplier-create-info h3 {
+        color: #f3f6ff;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .supplier-create-info > p {
+        color: #9aadd0;
+        font-size: 13px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .supplier-create-tip {
+        display: flex;
+        gap: 11px;
+        border-top: 1px solid #29365f;
+        padding: 14px 0;
+    }
+
+    .supplier-create-tip i {
+        color: #00c99a;
+        font-size: 17px;
+        margin-top: 2px;
+    }
+
+    .supplier-create-tip strong {
+        display: block;
+        color: #e7edfc;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .supplier-create-tip span {
+        display: block;
+        color: #9aadd0;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    @@media (max-width: 850px) {
+        .supplier-create-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .supplier-create-card {
+            padding: 20px 16px;
+        }
+
+        .supplier-create-header h2 {
+            font-size: 23px;
+        }
+    }
+</style>
+
+<div class="supplier-create">
+
+    <div class="supplier-create-header">
+        <div>
+            <h2>Add New Supplier</h2>
+            <p>Register a supplier to support your purchasing operations.</p>
+        </div>
+
+        <a asp-action="Index" class="supplier-create-back">
+            <i class="bi bi-arrow-left"></i>
+            Back to Suppliers
+        </a>
+    </div>
+
+    <div class="supplier-create-layout">
+
+        <div class="supplier-create-card">
+
+            <div class="supplier-create-card-heading">
+                <div class="supplier-create-icon">
+                    <i class="bi bi-building-add"></i>
+                </div>
+
+                <div>
+                    <h3>Supplier Information</h3>
+                    <p>Enter the supplier's contact details below.</p>
+                </div>
+            </div>
+
+            <form asp-controller="Suppliers"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
+
+                <div class="supplier-create-field">
+                    <label asp-for="Name" class="form-label">
+                        Supplier Name *
+                    </label>
+
+                    <input asp-for="Name"
+                           class="form-control"
+                           placeholder="Enter supplier or company name"
+                           autocomplete="organization" />
+
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="supplier-create-field">
+                    <label asp-for="Phone" class="form-label">
+                        Phone Number
+                    </label>
+
+                    <input asp-for="Phone"
+                           type="tel"
+                           class="form-control"
+                           placeholder="e.g. +962 7X XXX XXXX"
+                           autocomplete="tel" />
+
+                    <span asp-validation-for="Phone"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="supplier-create-field">
+                    <label asp-for="Email" class="form-label">
+                        Email Address
+                    </label>
+
+                    <input asp-for="Email"
+                           type="email"
+                           class="form-control"
+                           placeholder="supplier@example.com"
+                           autocomplete="email" />
+
+                    <span asp-validation-for="Email"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="supplier-create-field">
+                    <label asp-for="Address" class="form-label">
+                        Business Address
+                    </label>
+
+                    <input asp-for="Address"
+                           class="form-control"
+                           placeholder="Enter city, street, or business address"
+                           autocomplete="street-address" />
+
+                    <span asp-validation-for="Address"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="supplier-create-field">
+                    <label asp-for="Notes" class="form-label">
+                        Additional Notes
+                    </label>
+
+                    <textarea asp-for="Notes"
+                              class="form-control"
+                              placeholder="Add optional information about this supplier"></textarea>
+
+                    <span asp-validation-for="Notes"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="supplier-create-actions">
+                    <button type="submit" class="supplier-create-save">
+                        <i class="bi bi-check2-circle"></i>
+                        Save Supplier
+                    </button>
+
+                    <a asp-action="Index" class="supplier-create-cancel">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+        <aside class="supplier-create-info">
+
+            <div class="supplier-create-info-icon">
+                <i class="bi bi-clipboard-check"></i>
+            </div>
+
+            <h3>Supplier Setup</h3>
+
+            <p>
+                Maintain accurate supplier information to make future
+                purchasing and communication easier.
+            </p>
+
+            <div class="supplier-create-tip">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <strong>Required Information</strong>
+                    <span>Supplier name is required. Other fields are optional.</span>
+                </div>
+            </div>
+
+            <div class="supplier-create-tip">
+                <i class="bi bi-envelope-check"></i>
+                <div>
+                    <strong>Contact Details</strong>
+                    <span>Enter a valid email and phone number when available.</span>
+                </div>
+            </div>
+
+            <div class="supplier-create-tip">
+                <i class="bi bi-database-check"></i>
+                <div>
+                    <strong>Database Storage</strong>
+                    <span>Saved supplier details will be stored in your SQL Server database.</span>
+                </div>
+            </div>
+
+        </aside>
+
+    </div>
+</div>
+```

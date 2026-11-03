@@ -1,0 +1,312 @@
+﻿
+@using System.Linq
+@using System.Globalization
+@model dynamic
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var currency = CultureInfo.GetCultureInfo("en-US");
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div>
+        <h2 class="fw-bold mb-2">Welcome to Smart Inventory 👋</h2>
+        <p class="mb-0">Here's what's happening with your inventory today.</p>
+    </div>
+    <div class="small rounded-3 px-3 py-2" style="background:#142340;border:1px solid #203456;color:#b9c8e7">
+        <i class="bi bi-calendar3 me-2"></i>
+        @DateTime.Now.ToString("MMMM dd, yyyy")
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="dashboard-card p-4 h-100" style="border-left:4px solid #438bff">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="small" style="color:#b9c8e7">Total Products</span>
+                <span class="rounded-3 p-2" style="background:#193b80;color:#72aaff">
+                    <i class="bi bi-box-seam fs-4"></i>
+                </span>
+            </div>
+            <h2 class="fw-bold mb-2">@ViewBag.TotalProducts</h2>
+            <span class="small" style="color:#72aaff">Products in your inventory</span>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="dashboard-card p-4 h-100" style="border-left:4px solid #00c99a">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="small" style="color:#b9c8e7">Total Quantity</span>
+                <span class="rounded-3 p-2" style="background:#075b51;color:#52f0ca">
+                    <i class="bi bi-layers fs-4"></i>
+                </span>
+            </div>
+            <h2 class="fw-bold mb-2">@ViewBag.TotalQuantity</h2>
+            <span class="small" style="color:#52f0ca">Units currently in stock</span>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="dashboard-card p-4 h-100" style="border-left:4px solid #ff416c">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="small" style="color:#b9c8e7">Low Stock Products</span>
+                <span class="rounded-3 p-2" style="background:#681d3b;color:#ff7e9a">
+                    <i class="bi bi-exclamation-triangle fs-4"></i>
+                </span>
+            </div>
+            <h2 class="fw-bold mb-2">@ViewBag.LowStockCount</h2>
+            <span class="small" style="color:#ff7e9a">Require attention</span>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="dashboard-card p-4 h-100" style="border-left:4px solid #9657ff">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="small" style="color:#b9c8e7">Total Stock Value</span>
+                <span class="rounded-3 p-2" style="background:#402181;color:#c3a0ff">
+                    <i class="bi bi-currency-dollar fs-4"></i>
+                </span>
+            </div>
+            <h2 class="fw-bold mb-2" style="font-size:clamp(1.3rem,2vw,1.8rem)">
+                @(((decimal)ViewBag.TotalStockValue).ToString("C2", currency))
+            </h2>
+            <span class="small" style="color:#c3a0ff">Price × quantity</span>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-xl-7">
+        <div class="panel p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="fw-semibold mb-1">
+                        <i class="bi bi-graph-up-arrow me-2" style="color:#a783ff"></i>
+                        Inventory Overview
+                    </h5>
+                    <p class="small mb-0">Current stock value by product</p>
+                </div>
+                <span class="small rounded-3 px-3 py-2" style="background:#172747;color:#c4d1ec">Current</span>
+            </div>
+
+            @{
+                var chartProducts = ((System.Collections.Generic.IEnumerable<SmartInventorySystem.Model.Product>)ViewBag.ChartProducts
+                    ?? System.Linq.Enumerable.Empty<SmartInventorySystem.Model.Product>()).ToList();
+                var maxValue = chartProducts.Any() ? chartProducts.Max(p => p.Price * p.Quantity) : 1m;
+            }
+
+            @if (!chartProducts.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-bar-chart-line fs-1" style="color:#7186ad"></i>
+                    <p class="mt-3 mb-0">Add products to see your inventory overview.</p>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex align-items-end gap-3" style="height:220px;border-bottom:1px solid #304366;padding:12px 8px 0">
+                    @foreach (var product in chartProducts)
+                    {
+                        var value = product.Price * product.Quantity;
+                        var height = Math.Max(8, (double)(value / maxValue) * 175);
+                        <div class="flex-fill text-center" style="min-width:0">
+                            <div class="small mb-2" style="color:#aebfe2;font-size:10px">
+                                @value.ToString("N0")
+                            </div>
+                            <div class="mx-auto rounded-top-2"
+                                 title="@product.Name: @value.ToString("N2")"
+                                 style="height:@(height)px;max-width:54px;background:linear-gradient(180deg,#8a65ff,#3e68ef);box-shadow:0 0 18px #6745f533">
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex gap-3 mt-3">
+                    @foreach (var product in chartProducts)
+                    {
+                        <div class="flex-fill text-center text-truncate small" style="color:#9aadd0;font-size:10px;min-width:0" title="@product.Name">
+                            @product.Name
+                        </div>
+                    }
+                </div>
+                <p class="small mt-3 mb-0">Values are calculated from current price and quantity, not historical data.</p>
+            }
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+        <div class="panel p-4 h-100">
+            <h5 class="fw-semibold mb-1">
+                <i class="bi bi-pie-chart-fill me-2" style="color:#35baff"></i>
+                Stock Distribution
+            </h5>
+            <p class="small mb-4">Quantity by stock status</p>
+
+            @{
+                var inStockCount = (int)ViewBag.InStockCount;
+                var lowStockCount = (int)ViewBag.LowStockCount;
+                var totalForChart = Math.Max(1, inStockCount + lowStockCount);
+                var inStockPercent = (int)Math.Round(inStockCount * 100.0 / totalForChart);
+                var lowStockPercent = 100 - inStockPercent;
+            }
+
+            <div class="d-flex flex-column flex-sm-row align-items-center justify-content-around gap-4 py-3">
+                <div class="position-relative rounded-circle d-flex align-items-center justify-content-center"
+                     style="width:175px;height:175px;flex-shrink:0;background:conic-gradient(#2688ff 0% @inStockPercent%,#ff416c @inStockPercent% 100%)">
+                    <div class="rounded-circle d-flex flex-column align-items-center justify-content-center"
+                         style="width:115px;height:115px;background:#101d38">
+                        <strong class="fs-3">@ViewBag.TotalProducts</strong>
+                        <span class="small" style="color:#9aadd0">Products</span>
+                    </div>
+                </div>
+                <div class="w-100" style="max-width:220px">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="rounded-circle" style="width:10px;height:10px;background:#2688ff"></span>
+                        <span class="small flex-fill">In Stock</span>
+                        <strong>@inStockCount</strong>
+                    </div>
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="rounded-circle" style="width:10px;height:10px;background:#ff416c"></span>
+                        <span class="small flex-fill">Low Stock</span>
+                        <strong>@lowStockCount</strong>
+                    </div>
+                    <div class="progress mt-4" style="height:6px;background:#273958">
+                        <div class="progress-bar" style="width:@inStockPercent%;background:#2688ff"></div>
+                    </div>
+                    <p class="small mt-2 mb-0">@inStockPercent% of products are above their minimum stock level.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-12 col-xl-7">
+        <div class="panel overflow-hidden">
+            <div class="d-flex justify-content-between align-items-center p-4">
+                <div>
+                    <h5 class="fw-semibold mb-1">Recent Products</h5>
+                    <p class="small mb-0">Products in your inventory</p>
+                </div>
+                <a href="/Products" class="btn btn-sm btn-outline-secondary">View All <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+
+            @{
+                var recentProducts = ((System.Collections.Generic.IEnumerable<SmartInventorySystem.Model.Product>)ViewBag.RecentProducts
+                    ?? System.Linq.Enumerable.Empty<SmartInventorySystem.Model.Product>()).ToList();
+            }
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th class="ps-4">Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Status</th>
+                            <th class="text-end pe-4">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!recentProducts.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-box fs-2 d-block mb-2" style="color:#7186ad"></i>
+                                    No products yet. <a href="/Products/Create">Add your first product</a>.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var product in recentProducts)
+                            {
+                                var isLow = product.Quantity <= product.MinimumStock;
+                                <tr>
+                                    <td class="ps-4">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="rounded-3 d-flex align-items-center justify-content-center"
+                                                  style="width:36px;height:36px;background:#1c2f56;color:#86a9ff">
+                                                <i class="bi bi-box-seam"></i>
+                                            </span>
+                                            <span class="fw-semibold">@product.Name</span>
+                                        </div>
+                                    </td>
+                                    <td>@product.Quantity</td>
+                                    <td>@product.Price.ToString("C2", currency)</td>
+                                    <td>
+                                        @if (isLow)
+                                        {
+                                            <span class="badge rounded-pill" style="background:#76223d;color:#ff9ab0">Low Stock</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge rounded-pill" style="background:#075b51;color:#72f3d0">In Stock</span>
+                                        }
+                                    </td>
+                                    <td class="text-end pe-4">
+                                        <a href="/Products/Edit/@product.Id" class="btn btn-sm btn-outline-primary" title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-5">
+        <div class="panel p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h5 class="fw-semibold mb-1">
+                        <i class="bi bi-bell-fill me-2" style="color:#ff5479"></i>
+                        Low Stock Alerts
+                        <span class="badge rounded-pill ms-1" style="background:#76223d;color:#ff9ab0">@ViewBag.LowStockCount</span>
+                    </h5>
+                    <p class="small mb-0">Products that need replenishment</p>
+                </div>
+                <a href="/Products/LowStock" class="btn btn-sm btn-outline-secondary">View All</a>
+            </div>
+
+            @{
+                var lowProducts = ((System.Collections.Generic.IEnumerable<SmartInventorySystem.Model.Product>)ViewBag.LowStockProducts
+                    ?? System.Linq.Enumerable.Empty<SmartInventorySystem.Model.Product>()).ToList();
+            }
+
+            @if (!lowProducts.Any())
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-check-circle fs-1" style="color:#00c99a"></i>
+                    <h6 class="mt-3">All good!</h6>
+                    <p class="small">No products currently need reordering.</p>
+                </div>
+            }
+            else
+            {
+                @foreach (var product in lowProducts)
+                {
+                    <div class="d-flex align-items-center gap-3 p-3 mb-2 rounded-3"
+                         style="background:#121f3a;border:1px solid #263958">
+                        <div class="rounded-3 d-flex align-items-center justify-content-center"
+                             style="width:44px;height:44px;flex-shrink:0;background:#392039;color:#ff8aa5">
+                            <i class="bi bi-exclamation-triangle fs-5"></i>
+                        </div>
+                        <div class="flex-fill overflow-hidden">
+                            <div class="fw-semibold text-truncate">@product.Name</div>
+                            <div class="small" style="color:#9aadd0">
+                                Quantity: @product.Quantity | Minimum: @product.MinimumStock
+                            </div>
+                            <span class="badge mt-2 rounded-pill" style="background:#76223d;color:#ff9ab0">Reorder Required</span>
+                        </div>
+                        <a href="/Products/Edit/@product.Id" class="text-decoration-none" style="color:#a8bbdf" title="Edit product">
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+</div>

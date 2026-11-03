@@ -1,0 +1,171 @@
+﻿
+@model SmartInventorySystem.Model.Supplier
+
+@{
+    ViewData["Title"] = "Edit Supplier";
+}
+
+<style>
+    .supplier-form-page {
+        max-width: 850px;
+        margin: 0 auto;
+        color: #e5e7eb;
+    }
+
+    .form-heading {
+        margin-bottom: 25px;
+    }
+
+    .form-heading h2 {
+        font-weight: 700;
+        margin-bottom: 8px;
+    }
+
+    .form-heading p {
+        color: #9ca3af;
+    }
+
+    .form-card {
+        background: #151b2d;
+        border: 1px solid #293249;
+        border-radius: 18px;
+        padding: 30px;
+    }
+
+    .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        background: #0f1525;
+        border: 1px solid #35405a;
+        color: #f3f4f6;
+        border-radius: 10px;
+        padding: 12px 14px;
+    }
+
+    .form-control:focus {
+        background: #0f1525;
+        color: #fff;
+        border-color: #8b5cf6;
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, .15);
+    }
+
+    .form-control::placeholder {
+        color: #78839b;
+    }
+
+    .field-group {
+        margin-bottom: 22px;
+    }
+
+    .btn-save {
+        background: #7c3aed;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 22px;
+        font-weight: 600;
+    }
+
+    .btn-save:hover {
+        background: #6d28d9;
+        color: white;
+    }
+
+    .btn-cancel {
+        background: #293249;
+        color: #e5e7eb;
+        border-radius: 10px;
+        padding: 11px 22px;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-cancel:hover {
+        background: #35405a;
+        color: white;
+    }
+
+    .text-danger {
+        font-size: 13px;
+    }
+
+    @@media (max-width: 576px) {
+        .form-card {
+            padding: 20px;
+        }
+    }
+</style>
+
+<div class="supplier-form-page">
+    <div class="form-heading">
+        <h2>Edit Supplier</h2>
+        <p>Update the supplier's information.</p>
+    </div>
+
+    <div class="form-card">
+        <form asp-controller="Suppliers"
+              asp-action="Edit"
+              asp-route-id="@Model.Id"
+              method="post">
+
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3"></div>
+
+            <div class="field-group">
+                <label asp-for="Name" class="form-label">Supplier Name *</label>
+                <input asp-for="Name" class="form-control"
+                       placeholder="Enter supplier name" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 field-group">
+                    <label asp-for="Phone" class="form-label">Phone Number</label>
+                    <input asp-for="Phone" class="form-control"
+                           placeholder="Enter phone number" />
+                    <span asp-validation-for="Phone" class="text-danger"></span>
+                </div>
+
+                <div class="col-md-6 field-group">
+                    <label asp-for="Email" class="form-label">Email Address</label>
+                    <input asp-for="Email" class="form-control"
+                           placeholder="supplier@example.com" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="field-group">
+                <label asp-for="Address" class="form-label">Address</label>
+                <input asp-for="Address" class="form-control"
+                       placeholder="Enter supplier address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+
+            <div class="field-group">
+                <label asp-for="Notes" class="form-label">Notes</label>
+                <textarea asp-for="Notes" class="form-control" rows="4"
+                          placeholder="Additional information about the supplier"></textarea>
+                <span asp-validation-for="Notes" class="text-danger"></span>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-4">
+                <button type="submit" class="btn-save">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Save Changes
+                </button>
+
+                <a asp-controller="Suppliers" asp-action="Index"
+                   class="btn-cancel">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

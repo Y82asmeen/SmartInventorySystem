@@ -1,0 +1,476 @@
+﻿```cshtml
+@model SmartInventorySystem.Model.Product
+
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<style>
+    .edit-page {
+        color: #f3f6ff;
+        padding: 12px 0 35px;
+    }
+
+    .edit-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-bottom: 28px;
+    }
+
+    .edit-header h2 {
+        font-size: 28px;
+        font-weight: 750;
+        margin: 0 0 8px;
+        color: #f3f6ff;
+    }
+
+    .edit-header p {
+        color: #9aadd0;
+        margin: 0;
+        font-size: 14px;
+    }
+
+    .edit-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #c8c0ff;
+        background: #172747;
+        border: 1px solid #293d63;
+        padding: 10px 16px;
+        border-radius: 10px;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+    .edit-back:hover {
+        background: #24365a;
+        color: #fff;
+    }
+
+    .edit-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.6fr) minmax(240px, .8fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .edit-card {
+        background: #101d38;
+        border: 1px solid #203456;
+        border-radius: 18px;
+        padding: 28px;
+        box-shadow: 0 12px 35px rgba(0, 0, 0, .12);
+    }
+
+    .edit-card-title {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding-bottom: 22px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid #203456;
+    }
+
+    .edit-icon {
+        width: 46px;
+        height: 46px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 13px;
+        background: rgba(98, 71, 245, .17);
+        color: #a99bff;
+        font-size: 21px;
+    }
+
+    .edit-card-title h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 5px;
+        color: #f3f6ff;
+    }
+
+    .edit-card-title p {
+        color: #9aadd0;
+        font-size: 13px;
+        margin: 0;
+    }
+
+    .edit-page .form-label {
+        display: block;
+        color: #dce5fa;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 9px;
+    }
+
+    .edit-page .form-control {
+        background: #0b1429;
+        color: #f3f6ff;
+        border: 1px solid #293d63;
+        border-radius: 10px;
+        min-height: 46px;
+        padding: 11px 14px;
+        box-shadow: none;
+    }
+
+    .edit-page .form-control:focus {
+        background: #0b1429;
+        color: #fff;
+        border-color: #795fff;
+        box-shadow: 0 0 0 3px rgba(98, 71, 245, .17);
+    }
+
+    .edit-page .form-control::placeholder {
+        color: #7285a8;
+    }
+
+    .edit-page input[type="number"] {
+        color-scheme: dark;
+    }
+
+    .edit-field {
+        margin-bottom: 21px;
+    }
+
+    .edit-hint {
+        display: block;
+        color: #8195b9;
+        font-size: 12px;
+        margin-top: 7px;
+    }
+
+    .edit-page .text-danger {
+        display: block;
+        font-size: 12px;
+        margin-top: 6px;
+    }
+
+    .edit-page .validation-summary-errors {
+        background: rgba(255, 65, 108, .08);
+        border: 1px solid rgba(255, 65, 108, .3);
+        border-radius: 10px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
+    }
+
+    .edit-page .validation-summary-errors ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+
+    .edit-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding-top: 22px;
+        border-top: 1px solid #203456;
+        margin-top: 8px;
+    }
+
+    .edit-save {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        background: linear-gradient(135deg, #6247f5, #805bff);
+        color: #fff;
+        border: 0;
+        border-radius: 10px;
+        padding: 12px 22px;
+        font-weight: 650;
+        transition: .2s;
+    }
+
+    .edit-save:hover {
+        background: linear-gradient(135deg, #5236e8, #7048f5);
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    .edit-cancel {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        background: #172747;
+        color: #c8d5ed;
+        border: 1px solid #293d63;
+        border-radius: 10px;
+        padding: 12px 20px;
+        text-decoration: none;
+        transition: .2s;
+    }
+
+    .edit-cancel:hover {
+        background: #24365a;
+        color: #fff;
+    }
+
+    .edit-side-card {
+        background: linear-gradient(155deg, #151e43, #101d38 75%);
+        border: 1px solid #29365f;
+        border-radius: 18px;
+        padding: 24px;
+    }
+
+    .edit-side-icon {
+        width: 54px;
+        height: 54px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+        background: rgba(38, 136, 255, .14);
+        color: #63adff;
+        font-size: 25px;
+        margin-bottom: 20px;
+    }
+
+    .edit-side-card h3 {
+        color: #f3f6ff;
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 10px;
+    }
+
+    .edit-side-card > p {
+        color: #9aadd0;
+        font-size: 13px;
+        line-height: 1.8;
+        margin-bottom: 22px;
+    }
+
+    .edit-tip {
+        display: flex;
+        gap: 12px;
+        padding: 14px 0;
+        border-top: 1px solid #29365f;
+    }
+
+    .edit-tip i {
+        color: #00c99a;
+        font-size: 17px;
+        margin-top: 2px;
+    }
+
+    .edit-tip strong {
+        display: block;
+        color: #e7edfc;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .edit-tip span {
+        display: block;
+        color: #9aadd0;
+        font-size: 12px;
+        line-height: 1.7;
+    }
+
+    .edit-product-id {
+        display: inline-block;
+        color: #c3baff;
+        background: rgba(98, 71, 245, .14);
+        border: 1px solid rgba(98, 71, 245, .3);
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+        margin-top: 16px;
+    }
+
+    @@media (max-width: 900px) {
+        .edit-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @@media (max-width: 520px) {
+        .edit-card {
+            padding: 20px 16px;
+        }
+
+        .edit-header h2 {
+            font-size: 23px;
+        }
+
+        .edit-actions > * {
+            flex: 1;
+        }
+    }
+</style>
+
+<div class="edit-page">
+
+    <div class="edit-header">
+        <div>
+            <h2>Edit Product</h2>
+            <p>Update product information and keep your inventory accurate.</p>
+        </div>
+
+        <a asp-action="Index" class="edit-back">
+            <i class="bi bi-arrow-left"></i>
+            Back to Products
+        </a>
+    </div>
+
+    <div class="edit-layout">
+
+        <div class="edit-card">
+
+            <div class="edit-card-title">
+                <div class="edit-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+
+                <div>
+                    <h3>Product Information</h3>
+                    <p>Modify the details of this inventory item.</p>
+                </div>
+            </div>
+
+            <form asp-controller="Products"
+                  asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
+
+                <div class="edit-field">
+                    <label asp-for="Name" class="form-label">
+                        Product Name
+                    </label>
+
+                    <input asp-for="Name"
+                           class="form-control"
+                           placeholder="Enter product name" />
+
+                    <span asp-validation-for="Name"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="edit-field">
+                    <label asp-for="Price" class="form-label">
+                        Price
+                    </label>
+
+                    <input asp-for="Price"
+                           type="number"
+                           step="0.01"
+                           min="0"
+                           class="form-control"
+                           placeholder="0.00" />
+
+                    <span asp-validation-for="Price"
+                          class="text-danger"></span>
+
+                    <small class="edit-hint">
+                        Enter the price per unit.
+                    </small>
+                </div>
+
+                <div class="edit-field">
+                    <label asp-for="Quantity" class="form-label">
+                        Available Quantity
+                    </label>
+
+                    <input asp-for="Quantity"
+                           type="number"
+                           min="0"
+                           class="form-control"
+                           placeholder="Enter quantity" />
+
+                    <span asp-validation-for="Quantity"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="edit-field">
+                    <label asp-for="MinimumStock" class="form-label">
+                        Minimum Stock Level
+                    </label>
+
+                    <input asp-for="MinimumStock"
+                           type="number"
+                           min="0"
+                           class="form-control"
+                           placeholder="Enter minimum stock" />
+
+                    <span asp-validation-for="MinimumStock"
+                          class="text-danger"></span>
+
+                    <small class="edit-hint">
+                        The system uses this value to identify low-stock products.
+                    </small>
+                </div>
+
+                <div class="edit-actions">
+                    <button type="submit" class="edit-save">
+                        <i class="bi bi-check2-circle"></i>
+                        Save Changes
+                    </button>
+
+                    <a asp-action="Index" class="edit-cancel">
+                        <i class="bi bi-x-circle"></i>
+                        Cancel
+                    </a>
+                </div>
+
+            </form>
+        </div>
+
+        <aside class="edit-side-card">
+
+            <div class="edit-side-icon">
+                <i class="bi bi-box-seam"></i>
+            </div>
+
+            <h3>Inventory Management</h3>
+
+            <p>
+                Keep product information accurate to help maintain
+                stock visibility and make better purchasing decisions.
+            </p>
+
+            <div class="edit-tip">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <strong>Accurate Pricing</strong>
+                    <span>Make sure the product price reflects its current value.</span>
+                </div>
+            </div>
+
+            <div class="edit-tip">
+                <i class="bi bi-check-circle-fill"></i>
+                <div>
+                    <strong>Stock Control</strong>
+                    <span>Update quantities whenever stock changes.</span>
+                </div>
+            </div>
+
+            <div class="edit-tip">
+                <i class="bi bi-bell-fill"></i>
+                <div>
+                    <strong>Low Stock Alerts</strong>
+                    <span>Set a suitable minimum quantity to identify products that need restocking.</span>
+                </div>
+            </div>
+
+            <div class="edit-product-id">
+                <i class="bi bi-hash"></i>
+                Product ID: @Model.Id
+            </div>
+
+        </aside>
+
+    </div>
+</div>
+```
